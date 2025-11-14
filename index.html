@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proto - Campus News</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- CSS Modules -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="css/cards.css">
+    <link rel="stylesheet" href="css/forms.css">
+    <link rel="stylesheet" href="css/image-adjustment.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/loading.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">Proto</h1>
+            <nav class="nav">
+                <a href="#" class="nav-link active">My Feed</a>
+                <a href="#" class="nav-link">Campus</a>
+                <a href="#" class="nav-link">Sports</a>
+                <a href="#" class="nav-link">Events</a>
+                <a href="#" class="nav-link">Opinion</a>
+            </nav>
+            <div class="header-actions">
+                <button class="menu-btn"><i class="fas fa-ellipsis-h"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Loading State -->
+        <div class="loading-container" id="loadingContainer">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Loading articles...</p>
+            </div>
+        </div>
+
+        <!-- Featured Story -->
+        <section class="featured-story" id="featuredStory" style="display: none;">
+            <!-- Featured article will be loaded here -->
+        </section>
+
+        <!-- News Cards Grid -->
+        <section class="news-grid" id="newsGrid" style="display: none;">
+            <!-- Articles will be loaded here -->
+        </section>
+    </main>
+
+    <!-- Article Submission Form Modal -->
+    <div class="article-form-modal" id="articleFormModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> Submit Article</h2>
+                <button class="close-modal" id="closeArticleForm">&times;</button>
+            </div>
+            <form class="article-form" id="articleForm">
+                <div class="form-group">
+                    <label for="articleTitle">Article Heading *</label>
+                    <input type="text" id="articleTitle" name="title" required maxlength="100" placeholder="Enter article heading">
+                    <div class="char-count" id="titleCount">0/100</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="articleBody">Article Body *</label>
+                    <textarea id="articleBody" name="body" required maxlength="450" placeholder="Write your article content here..." rows="6"></textarea>
+                    <div class="char-count" id="bodyCount">0/450</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="articleTag">Category *</label>
+                    <select id="articleTag" name="tag" required>
+                        <option value="">Select a category</option>
+                        <option value="Campus">Campus</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Events">Events</option>
+                        <option value="Opinion">Opinion</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="articleImage">Article Photo *</label>
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click to upload or drag and drop</p>
+                        <p class="file-info">PNG, JPG, GIF up to 5MB</p>
+                        <input type="file" id="articleImage" name="image" accept="image/*" required style="display: none;">
+                    </div>
+                    
+                    <!-- Simple Image Adjustment Area -->
+                    <div class="image-adjustment-area" id="imageAdjustmentArea" style="display: none;">
+                        <div class="image-container-with-grid">
+                            <img id="adjustableImage" src="" alt="Adjustable image">
+                            <div class="grid-overlay">
+                                <div class="grid-line grid-line-h" style="top: 33.33%"></div>
+                                <div class="grid-line grid-line-h" style="top: 66.66%"></div>
+                                <div class="grid-line grid-line-v" style="left: 33.33%"></div>
+                                <div class="grid-line grid-line-v" style="left: 66.66%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="adjustment-controls">
+                            <div class="zoom-control">
+                                <label><i class="fas fa-search-minus"></i></label>
+                                <input type="range" id="imageZoomSlider" min="100" max="200" value="100" step="1" class="zoom-slider">
+                                <label><i class="fas fa-search-plus"></i></label>
+                            </div>
+                            <div class="adjustment-hint">
+                                <i class="fas fa-hand-pointer"></i> Drag to reposition • Pinch or slide to zoom
+                            </div>
+                            <button type="button" class="remove-image-btn" id="removeImage">
+                                <i class="fas fa-trash"></i> Remove Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancelArticle">Cancel</button>
+                    <button type="submit" class="submit-btn" id="submitArticle">
+                        <i class="fas fa-paper-plane"></i> Submit Article
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar (Mobile) -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="#" class="nav-item add-article-btn" id="addArticleBtn">
+            <i class="fas fa-plus"></i>
+            <span>Add</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Proto</h4>
+                <p>Your campus news source</p>
+            </div>
+            <div class="footer-section">
+                <h4>Categories</h4>
+                <ul>
+                    <li><a href="#">Campus</a></li>
+                    <li><a href="#">Sports</a></li>
+                    <li><a href="#">Events</a></li>
+                    <li><a href="#">Opinion</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>Email: news@proto.edu</p>
+                <p>Phone: (555) 123-4567</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Proto. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Modules - Load in Order -->
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/models/ArticleModel.js"></script>
+    <script src="js/views/ArticleView.js"></script>
+    <script src="js/views/ProfileView.js"></script>
+    <script src="js/views/FormView.js"></script>
+    <script src="js/controllers/AppController.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
