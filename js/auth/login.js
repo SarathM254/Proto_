@@ -13,9 +13,9 @@ async function checkAuthStatus() {
     try {
         const response = await fetch('/api/auth/status');
         const data = await response.json();
-        
+
         if (data.authenticated) {
-            window.location.href = '/';
+            window.location.href = '/app';
         }
     } catch (error) {
         console.error('Auth check failed:', error);
@@ -30,7 +30,7 @@ async function checkAuthStatus() {
 async function login(email, password) {
     const loginBtn = document.getElementById('loginBtn');
     const loading = document.getElementById('loading');
-    
+
     loginBtn.disabled = true;
     loading.style.display = 'block';
     clearErrors();
@@ -48,7 +48,7 @@ async function login(email, password) {
         const data = await response.json();
 
         if (response.ok) {
-            window.location.href = '/';
+            window.location.href = '/app';
         } else {
             if (response.status === 404) {
                 showError(data.error, 'email');
@@ -76,7 +76,7 @@ async function login(email, password) {
 async function register(name, email, password) {
     const registerBtn = document.getElementById('registerSubmitBtn');
     const loading = document.getElementById('regLoading');
-    
+
     registerBtn.disabled = true;
     loading.style.display = 'block';
     clearErrors();
@@ -103,9 +103,9 @@ async function register(name, email, password) {
                     <i class="fas fa-check-circle"></i> Welcome to Proto! Redirecting...
                 </div>
             `;
-            
+
             setTimeout(() => {
-                window.location.href = '/';
+                window.location.href = '/app';
             }, 2000);
         } else {
             showError(data.error || 'Registration failed', 'regEmail');
@@ -171,11 +171,11 @@ function showRegisterForm() {
     // Add event listeners for register form
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const name = document.getElementById('regName').value;
         const email = document.getElementById('regEmail').value;
         const password = document.getElementById('regPassword').value;
-        
+
         if (!name || !email || !password) {
             showError('Please fill in all fields');
             return;
@@ -198,10 +198,10 @@ function showError(message, fieldId = null) {
     const generalErrorDiv = document.createElement('div');
     generalErrorDiv.className = 'error-message-general';
     generalErrorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-    
+
     const form = document.querySelector('form');
     form.insertBefore(generalErrorDiv, form.firstChild);
-    
+
     if (fieldId) {
         const errorField = document.getElementById(`${fieldId}Error`);
         const inputField = document.getElementById(fieldId);
@@ -211,7 +211,7 @@ function showError(message, fieldId = null) {
             inputField.classList.add('error');
         }
     }
-    
+
     setTimeout(() => {
         generalErrorDiv.remove();
     }, 5000);
@@ -236,10 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            
+
             if (!email || !password) {
                 showError('Please fill in all fields');
                 return;
@@ -257,4 +257,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-

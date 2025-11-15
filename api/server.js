@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -31,15 +32,19 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Session configuration
+// Session configuration with SQLiteStore
 app.use(session({
-    // In production, use a long, random string from an environment variable
+    store: new SQLiteStore({
+        db: 'sessions.db',
+        dir: '/tmp', // Vercel's temporary directory
+        table: 'sessions'
+    }),
     secret: process.env.SESSION_SECRET || 'proto-secret-key-2024-dev',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, // Set to true in production with HTTPS
-        httpOnly: true, // Helps prevent XSS attacks
+        secure: 'auto', // Use secure cookies in production
+        httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }));
@@ -338,29 +343,31 @@ app.get('/api/articles', async (req, res) => {
     }
 });
 
-// Serve the main application
-app.get('/', (req, res) => {
+// Serve the main application page (app.html) only if authenticated
+app.get('/app', (req, res) => {
     if (req.session && req.session.userId) {
-        res.sendFile(path.join(__dirname, '..', 'index.html'));
+        res.sendFile(path.join(__dirname, '..', 'app.html'));
     } else {
-        res.redirect('/login');
+        // Redirect to login page (which is now the root index.html)
+        res.redirect('/');
     }
 });
 
-// Serve login page
+// Redirect from old /login path to root, just in case
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'login.html'));
+    res.redirect('/');
 });
 
-// Catch-all handler for SPA routing (must be last)
+// Catch-all handler
 app.use((req, res) => {
-    // If it's an API route, return 404
+    // If an API route is not found, return 404
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'API endpoint not found' });
     }
 
-    // For all other routes, serve the main app
-    res.sendFile(path.join(__dirname, '..', 'index.html'));
+    // For any other route, redirect to the login page (root)
+    // This prevents showing a 404 for a page that might exist after login
+    res.redirect('/');
 });
 
 // Initialize database and start server
