@@ -47,7 +47,7 @@ app.use(session({
 // Configure multer for file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const uploadDir = path.join(__dirname, '..', 'uploads');
+        const uploadDir = path.join(__dirname, '..', 'public', 'uploads');
         if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir, { recursive: true });
         }
@@ -73,13 +73,8 @@ const upload = multer({
     }
 });
 
-// Serve static files from the parent directory (frontend)
-app.use(express.static(path.join(__dirname, '..'), {
-    index: false // Disable automatic index serving
-}));
-
-// Serve uploaded images
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+// Serve static files from the `public` directory
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Authentication middleware
 function requireAuth(req, res, next) {
@@ -333,29 +328,14 @@ app.get('/api/articles', async (req, res) => {
     }
 });
 
-// Serve the main application
-app.get('/', (req, res) => {
-    if (req.session && req.session.userId) {
-        res.sendFile(path.join(__dirname, '..', 'index.html'));
-    } else {
-        res.redirect('/login');
-    }
-});
-
-// Serve login page
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'login.html'));
-});
-
-// Catch-all handler for SPA routing (must be last)
+// API routes are the only routes handled by this server
+// All other routes for static files are handled by Vercel
 app.use((req, res) => {
-    // If it's an API route, return 404
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ error: 'API endpoint not found' });
     }
-    
-    // For all other routes, serve the main app
-    res.sendFile(path.join(__dirname, '..', 'index.html'));
+    // Vercel handles all other routes, so we can just return a 404 here as well.
+    return res.status(404).json({ error: 'Not found' });
 });
 
 // Initialize database and start server
