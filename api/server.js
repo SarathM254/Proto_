@@ -34,7 +34,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Session configuration
 app.use(session({
     // In production, use a long, random string from an environment variable
-    secret: 'proto-secret-key-2024',
+    secret: process.env.SESSION_SECRET || 'proto-secret-key-2024-dev',
     resave: false,
     saveUninitialized: false,
     cookie: {
